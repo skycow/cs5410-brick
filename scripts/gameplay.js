@@ -8,7 +8,9 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		cancelNextRequest = false,
 		lastTimeStamp,
 		bricks = [],
-		ball = null;
+		ball = null,
+		countdown = 3,
+		second = 0;
 	
 	function initialize() {
 		console.log('game initializing...');
@@ -17,9 +19,10 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			center : { x : 650, y : 750 },
 			width : 200, height : 50,
 			rotation : 0,
-			moveRate : 400,			// pixels per second
+			moveRate : 2000,			// pixels per second
 			rotateRate : 3.14159,	// Radians per second
-			color : "black"
+			color : "black",
+			broken: false 
 		});
 
 		var colors = ["black", "green", "green", "blue", "blue", "orange", "orange", "yellow", "yellow"];
@@ -33,7 +36,8 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 						rotation : 0,
 						moveRate : 0,			// pixels per second
 						rotateRate : 0,	// Radians per second
-						color : colors[colorCount] 
+						color : colors[colorCount],
+						broken: false 
 						})
 					);
 				}
@@ -52,7 +56,8 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 					rotation : 0,
 					moveRate : 0,			// pixels per second
 					rotateRate : 0,	// Radians per second
-					color : "black"
+					color : "black",
+					broken: false 
 					})
 				);
 			};
@@ -61,8 +66,9 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		ball = graphics.Texture( {
 			center : { x : 750, y : 725 },
 			width : 50, height : 50,
-			rotation : 3.14159/4,
-			moveRate : 400,			// pixels per second
+			rotation : -3.14159/4,
+			direction: {x: Math.cos(-3.14159/4), y: Math.sin(-3.14159/4)},
+			moveRate : .2,			// pixels per second
 			rotateRate : 0,	// Radians per second
 			color : "red"
 		});
@@ -106,8 +112,19 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 	}
 	
 	function update(elapsedTime) {
-		myKeyboard.update(elapsedTime);
-		ball.moveBall();
+		if(!countdown){
+			myKeyboard.update(elapsedTime);
+			ball.moveBall(elapsedTime);
+			for(var brick in bricks){
+				bricks[brick].checkCollisions(ball.getSpec());
+			}
+		}else{
+			second += elapsedTime/1000;
+			if(second >= 1){
+				countdown--;
+				second = 0;
+			}
+		}
 		// myMouse.update(elapsedTime);
 	}
 	
@@ -118,6 +135,15 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			bricks[brick].draw();
 		}
 		ball.drawBall();
+		if(countdown){
+			var canvas = document.getElementById("canvas-main");
+			var ctx = canvas.getContext("2d");
+			ctx.font = "300px Comic Sans MS";
+			ctx.fillStyle = "red";
+			ctx.textAlign = "center";
+			ctx.fillText(countdown, canvas.width/2, canvas.height/2); 
+		}
+		
 	}
 	
 	//------------------------------------------------------------------

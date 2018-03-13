@@ -36,6 +36,10 @@ MyGame.graphics = (function() {
 	//------------------------------------------------------------------
 	function Texture(spec) {
 		var that = {};
+
+		that.getSpec = function(){
+			return spec;
+		};
 			
 		that.updateRotation = function(angle) {
 			spec.rotation += angle;
@@ -50,10 +54,12 @@ MyGame.graphics = (function() {
 		};
 		
 		that.moveLeft = function(elapsedTime) {
+			if(spec.center.x - spec.moveRate * (elapsedTime / 1000) > 25)
 			spec.center.x -= spec.moveRate * (elapsedTime / 1000);
 		};
 		
 		that.moveRight = function(elapsedTime) {
+			if(spec.center.x + spec.moveRate * (elapsedTime / 1000) < 1275)
 			spec.center.x += spec.moveRate * (elapsedTime / 1000);
 		};
 		
@@ -70,6 +76,7 @@ MyGame.graphics = (function() {
 		};
 		
 		that.draw = function() {
+			if(!spec.broken){
 				context.save();
 				
 				context.translate(spec.center.x, spec.center.y);
@@ -99,6 +106,44 @@ MyGame.graphics = (function() {
 				// context.fill();
 				
 				context.restore();
+			}
+		};
+
+		that.checkCollisions = function(ballSpec){
+			if(spec.color != "black" && !spec.broken){
+
+				//north/south hit
+				if(ballSpec.center.x > spec.center.x && ballSpec.center.x < spec.center.x+spec.width){
+					//north hit
+					if(ballSpec.center.y+ballSpec.height/2 > spec.center.y && ballSpec.center.y+ballSpec.height/2 < spec.center.y+spec.height){
+						spec.broken = true;
+						ballSpec.direction.y = -ballSpec.direction.y;	
+					}else if(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y-ballSpec.height/2 < spec.center.y+spec.height){
+						spec.broken = true;
+						ballSpec.direction.y = -ballSpec.direction.y;	
+					}
+				} 
+				if(ballSpec.center.y > spec.center.y && ballSpec.center.y < spec.center.y+spec.height){
+					//north hit
+					if(ballSpec.center.x+ballSpec.width/2 > spec.center.x && ballSpec.center.x+ballSpec.width/2 < spec.center.x+spec.width){
+						spec.broken = true;
+						ballSpec.direction.x = -ballSpec.direction.x;	
+					}else if(ballSpec.center.x-ballSpec.width/2 > spec.center.x && ballSpec.center.x-ballSpec.width/2 < spec.center.x+spec.width){
+						spec.broken = true;
+						ballSpec.direction.x = -ballSpec.direction.x;	
+					}
+				}
+
+				// if(!(ballSpec.center.x+ballSpec.width/2 < spec.center.x && ballSpec.center.x-ballSpec.width/2 > spec.center.x+spec.width) ){
+				// 	spec.broken = true;
+				// 	ballSpec.direction.x = -ballSpec.direction.x;
+				// }
+				// else if(!(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y+ballSpec.height/2 > spec.center.y+spec.height) ){
+				// 	spec.broken = true;
+				// 	ballSpec.direction.y = -ballSpec.direction.y;
+				// }
+			}
+
 		};
 		
 		that.drawBall = function() {
@@ -135,6 +180,12 @@ MyGame.graphics = (function() {
 
 	that.moveBall = (elapsedTime) => {
 		
+		spec.center.x += (elapsedTime * spec.moveRate * spec.direction.x);
+		if(spec.center.x+spec.width/2 < 100 || spec.center.x+spec.width/2 > 1450 )
+			spec.direction.x = -spec.direction.x;
+		spec.center.y += (elapsedTime * spec.moveRate * spec.direction.y);
+		if(spec.center.y+spec.width/2 < 100 || spec.center.y+spec.width/2 > 800 )
+		spec.direction.y = -spec.direction.y;
 
 	}
 
