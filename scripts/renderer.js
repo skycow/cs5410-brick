@@ -109,16 +109,19 @@ MyGame.graphics = (function() {
 			}
 		};
 
-		that.checkCollisions = function(ballSpec){
-			if(spec.color != "black" && !spec.broken){
+		that.checkCollisions = function(ballSpec, paddle){
+			if((spec.color != "black" || paddle) && !spec.broken){
 
 				//north/south hit
 				if(ballSpec.center.x > spec.center.x && ballSpec.center.x < spec.center.x+spec.width){
 					//north hit
 					if(ballSpec.center.y+ballSpec.height/2 > spec.center.y && ballSpec.center.y+ballSpec.height/2 < spec.center.y+spec.height){
+						if(!paddle)
 						spec.broken = true;
 						ballSpec.direction.y = -ballSpec.direction.y;	
+						ballSpec.center.y = spec.center.y-ballSpec.height/2;
 					}else if(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y-ballSpec.height/2 < spec.center.y+spec.height){
+						if(!paddle)						
 						spec.broken = true;
 						ballSpec.direction.y = -ballSpec.direction.y;	
 					}
@@ -126,23 +129,23 @@ MyGame.graphics = (function() {
 				if(ballSpec.center.y > spec.center.y && ballSpec.center.y < spec.center.y+spec.height){
 					//north hit
 					if(ballSpec.center.x+ballSpec.width/2 > spec.center.x && ballSpec.center.x+ballSpec.width/2 < spec.center.x+spec.width){
+						if(!paddle)
 						spec.broken = true;
 						ballSpec.direction.x = -ballSpec.direction.x;	
+						ballSpec.center.x = spec.center.x-ballSpec.width/2;
 					}else if(ballSpec.center.x-ballSpec.width/2 > spec.center.x && ballSpec.center.x-ballSpec.width/2 < spec.center.x+spec.width){
+						if(!paddle)
 						spec.broken = true;
 						ballSpec.direction.x = -ballSpec.direction.x;	
+						ballSpec.center.x = spec.center.x+spec.width+ballSpec.width/2;
 					}
 				}
-
-				// if(!(ballSpec.center.x+ballSpec.width/2 < spec.center.x && ballSpec.center.x-ballSpec.width/2 > spec.center.x+spec.width) ){
-				// 	spec.broken = true;
-				// 	ballSpec.direction.x = -ballSpec.direction.x;
-				// }
-				// else if(!(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y+ballSpec.height/2 > spec.center.y+spec.height) ){
-				// 	spec.broken = true;
-				// 	ballSpec.direction.y = -ballSpec.direction.y;
-				// }
 			}
+
+		};
+
+		that.checkBounce = function() {
+
 
 		};
 		

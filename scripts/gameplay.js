@@ -116,8 +116,10 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			myKeyboard.update(elapsedTime);
 			ball.moveBall(elapsedTime);
 			for(var brick in bricks){
-				bricks[brick].checkCollisions(ball.getSpec());
+				bricks[brick].checkCollisions(ball.getSpec(),false);
 			}
+			myTexture.checkCollisions(ball.getSpec(),true);
+			//myTexture.checkBounce(ball.getSpec());
 		}else{
 			second += elapsedTime/1000;
 			if(second >= 1){
