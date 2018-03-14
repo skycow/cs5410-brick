@@ -23,6 +23,8 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		second = 0;
 		score = 0;
 
+		graphics.reset();
+
 		myTexture = graphics.Texture( {
 			center : { x : 650, y : 750 },
 			width : 200, height : 50,
@@ -76,7 +78,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			width : 50, height : 50,
 			rotation : -3.14159/4,
 			direction: {x: Math.cos(-3.14159/4), y: Math.sin(-3.14159/4)},
-			moveRate : .2,			// pixels per second
+			moveRate : .3,			// pixels per second
 			rotateRate : 0,	// Radians per second
 			color : "red",
 			active: true
@@ -88,7 +90,8 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		// Create the keyboard input handler and register the keyboard commands
 		myKeyboard.registerCommand(KeyEvent.DOM_VK_A, myTexture.moveLeft);
 		myKeyboard.registerCommand(KeyEvent.DOM_VK_D, myTexture.moveRight);
-		// myKeyboard.registerCommand(KeyEvent.DOM_VK_W, myTexture.moveUp);
+		myKeyboard.registerCommand(KeyEvent.DOM_VK_LEFT, myTexture.moveLeft);
+		myKeyboard.registerCommand(KeyEvent.DOM_VK_RIGHT, myTexture.moveRight);
 		// myKeyboard.registerCommand(KeyEvent.DOM_VK_S, myTexture.moveDown);
 		// myKeyboard.registerCommand(KeyEvent.DOM_VK_Q, myTexture.rotateLeft);
 		// myKeyboard.registerCommand(KeyEvent.DOM_VK_E, myTexture.rotateRight);
@@ -121,13 +124,13 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 	}
 	
 	function update(elapsedTime) {
+		myKeyboard.update(elapsedTime);
 		if(!countdown){
-			myKeyboard.update(elapsedTime);
 			ball.moveBall(elapsedTime);
 			for(var brick in bricks){
-				bricks[brick].checkCollisions(ball.getSpec(),false,{score:score});
+				bricks[brick].checkCollisions(ball.getSpec(),false, brick-14);
 			}
-			myTexture.checkCollisions(ball.getSpec(),true,{score:score});
+			myTexture.checkCollisions(ball.getSpec(),true, -1);
 			//myTexture.checkBounce(ball.getSpec());
 		}else{
 			second += elapsedTime/1000;
@@ -146,6 +149,9 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			bricks[brick].draw();
 		}
 		ball.drawBall();
+		graphics.drawScore();
+		graphics.drawPads();
+		countdown += graphics.getCountdown();
 		if(countdown){
 			var canvas = document.getElementById("canvas-main");
 			var ctx = canvas.getContext("2d");
@@ -153,6 +159,15 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			ctx.fillStyle = "red";
 			ctx.textAlign = "center";
 			ctx.fillText(countdown, canvas.width/2, canvas.height/2); 
+		} else if (graphics.getPads() === 0 || graphics.getEnd()){
+			var canvas = document.getElementById("canvas-main");
+			var ctx = canvas.getContext("2d");
+			ctx.font = "200px Comic Sans MS";
+			ctx.fillStyle = "red";
+			ctx.textAlign = "center";
+			ctx.fillText("Game Over", canvas.width/2, canvas.height/2);
+			ctx.font = "30px Comic Sans MS";
+			ctx.fillText("Press ESC key to contine", canvas.width/2, canvas.height/2+80);
 		}
 		
 	}

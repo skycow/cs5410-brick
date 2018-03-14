@@ -5,6 +5,10 @@ MyGame.screens['high-scores'] = (function(game) {
 		document.getElementById('id-high-scores-back').addEventListener(
 			'click',
 			function() { game.showScreen('main-menu'); });
+		document.getElementById('id-high-scores-reset').addEventListener(
+			'click',
+			function() { localStorage.scores = JSON.stringify([]);
+			game.showScreen('high-scores'); });
 	}
 	
 	function run() {

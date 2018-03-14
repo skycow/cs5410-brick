@@ -10,7 +10,12 @@ MyGame.graphics = (function() {
 		context = canvas.getContext('2d');
 
 	var score = 0;
-	
+	var paddles = 3;
+	var countdown = 0;
+	var rows = [0,0,0,0,0,0,0,0];
+	var endGame = false;
+	var speedCheck = 0;
+
 	//
 	// Place a 'clear' function on the Canvas prototype, this makes it a part
 	// of the canvas, rather than making a function that calls and does it.
@@ -28,6 +33,46 @@ MyGame.graphics = (function() {
 	//------------------------------------------------------------------
 	function clear() {
 		context.clear();
+	}
+
+	function drawScore() {
+			context.font = "30px Comic Sans MS";
+			context.fillStyle = "red";
+			context.textAlign = "center";
+			context.fillText("score: " + score, 1300,850);
+	};
+
+	function drawPads() {
+		var padcor = [{x:50, y: 850}, {x:150, y: 850}, {x:250, y: 850}]
+		for(var i = 0; i < paddles; i++)
+		{
+			context.beginPath();
+			context.fillStyle = "black";
+			context.rect(padcor[i].x, padcor[i].y, 40, 20);
+			context.fill();
+		}
+	};	
+
+	function reset() {
+		score = 0;
+		paddles = 3;
+		rows = [0,0,0,0,0,0,0,0];
+		speedCheck = 0;
+
+	}
+
+	function getCountdown() {
+		var ret = countdown;
+		countdown = 0;
+		return ret;
+	}
+
+	function getPads() {
+		return paddles;
+	}
+
+	function getEnd() {
+		return endGame;
 	}
 	
 	//------------------------------------------------------------------
@@ -130,7 +175,7 @@ MyGame.graphics = (function() {
 			}
 		};
 
-		that.checkCollisions = function(ballSpec, paddle){
+		that.checkCollisions = function(ballSpec, paddle, idx){
 			if((spec.color != "black" || paddle) && !spec.broken){
 
 				//north/south hit
@@ -138,32 +183,77 @@ MyGame.graphics = (function() {
 					//north hit
 					if(ballSpec.center.y+ballSpec.height/2 > spec.center.y && ballSpec.center.y+ballSpec.height/2 < spec.center.y+spec.height){
 						if(!paddle)
-						spec.broken = true;
+							spec.broken = true;
+							else {
+							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
+							}
 						ballSpec.direction.y = -ballSpec.direction.y;	
 						ballSpec.center.y = spec.center.y-ballSpec.height/2;
 						score += getPoints(spec.color);
+						rows[Math.floor(idx/14)]+=1;
+						if(rows[Math.floor(idx/14)] === 14)
+							score += 125; 
+											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+					ballSpec.moveRate += .05;
+				}
 					}else if(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y-ballSpec.height/2 < spec.center.y+spec.height){
 						if(!paddle)						
-						spec.broken = true;
+							spec.broken = true;
+						else {
+							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
+							}
 						ballSpec.direction.y = -ballSpec.direction.y;	
 						score += getPoints(spec.color);
+						rows[Math.floor(idx/14)]+=1;
+						if(rows[Math.floor(idx/14)] === 14)
+							score += 125; 
+											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+					ballSpec.moveRate += .05;
+				}
 					}
 				} 
 				if(ballSpec.center.y > spec.center.y && ballSpec.center.y < spec.center.y+spec.height){
 					//north hit
 					if(ballSpec.center.x+ballSpec.width/2 > spec.center.x && ballSpec.center.x+ballSpec.width/2 < spec.center.x+spec.width){
 						if(!paddle)
-						spec.broken = true;
+							spec.broken = true;
+							else {
+							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
+							}
 						ballSpec.direction.x = -ballSpec.direction.x;	
 						ballSpec.center.x = spec.center.x-ballSpec.width/2;
 						score += getPoints(spec.color);
+						rows[Math.floor(idx/14)]+=1;
+						if(rows[Math.floor(idx/14)] === 14)
+							score += 125; 
+											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+					ballSpec.moveRate += .05;
+				}
 					}else if(ballSpec.center.x-ballSpec.width/2 > spec.center.x && ballSpec.center.x-ballSpec.width/2 < spec.center.x+spec.width){
 						if(!paddle)
-						spec.broken = true;
+							spec.broken = true;
+							else {
+							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
+							}
 						ballSpec.direction.x = -ballSpec.direction.x;	
 						ballSpec.center.x = spec.center.x+spec.width+ballSpec.width/2;
 						score += getPoints(spec.color);
+						rows[Math.floor(idx/14)]+=1;
+						if(rows[Math.floor(idx/14)] === 14)
+							score += 125; 
+											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+					ballSpec.moveRate += .05;
+				}
 					}
+				}
+				
+
+				if(allBroken === 112){
+					endGame = true;
 				}
 			}
 
@@ -173,6 +263,8 @@ MyGame.graphics = (function() {
 
 
 		};
+
+		
 		
 		that.drawBall = function() {
 			if(spec.active){
@@ -210,19 +302,40 @@ MyGame.graphics = (function() {
 	};
 
 	that.moveBall = (elapsedTime) => {
-		
-		spec.center.x += (elapsedTime * spec.moveRate * spec.direction.x);
-		if(spec.center.x+spec.width/2 < 100 || spec.center.x+spec.width/2 > 1450 )
-			spec.direction.x = -spec.direction.x;
-		spec.center.y += (elapsedTime * spec.moveRate * spec.direction.y);
-		if(spec.center.y+spec.width/2 < 100)
-		spec.direction.y = -spec.direction.y;
-		if( spec.center.y+spec.width/2 > 800 ){
-			spec.center.x = 750;
-			spec.center.y = 725;
-			spec.direction.x = Math.cos(-3.14159/4);
-			spec.direction.y = Math.sin(-3.14159/4);
+		if(spec.active){
+			spec.center.x += (elapsedTime * spec.moveRate * spec.direction.x);
+			if(spec.center.x+spec.width/2 < 100 || spec.center.x+spec.width/2 > 1450 )
+				spec.direction.x = -spec.direction.x;
+			spec.center.y += (elapsedTime * spec.moveRate * spec.direction.y);
+			if(spec.center.y+spec.width/2 < 100)
+			spec.direction.y = -spec.direction.y;
+			if( spec.center.y+spec.width/2 > 800 ){
+				spec.center.x = 750;
+				spec.center.y = 725;
+				spec.direction.x = Math.cos(-3.14159/4);
+				spec.direction.y = Math.sin(-3.14159/4);
+				countdown = 3;
+				paddles--;
+				speedCheck = rows.reduce((a, b) => a + b, 0);
+				spec.moveRate = .2;
+				if(paddles === 0) {
+					countdown = 0;
+					spec.active = false;
+					var scorearr = localStorage.getItem('scores');
+					if(scorearr !== null){
+						scorearr = JSON.parse(scorearr);
+						scorearr.push(score);
+					} else {
+						scorearr = [score];
+					}
+					localStorage.scores = JSON.stringify(scorearr);
+					document.getElementById('id-continue-game').classList.add('hide');
+					//MyGame.game.showScreen('main-menu');
+				}
+			}
+
 		}
+		
 
 	}
 
@@ -243,6 +356,12 @@ MyGame.graphics = (function() {
 
 	return {
 		clear : clear,
-		Texture : Texture
+		Texture : Texture,
+		drawScore: drawScore, 
+		drawPads: drawPads,
+		reset: reset,
+		getCountdown: getCountdown,
+		getPads: getPads,
+		getEnd: getEnd
 	};
 }());
