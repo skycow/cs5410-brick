@@ -94,9 +94,6 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		myKeyboard.registerCommand(KeyEvent.DOM_VK_D, myTexture.moveRight);
 		myKeyboard.registerCommand(KeyEvent.DOM_VK_LEFT, myTexture.moveLeft);
 		myKeyboard.registerCommand(KeyEvent.DOM_VK_RIGHT, myTexture.moveRight);
-		// myKeyboard.registerCommand(KeyEvent.DOM_VK_S, myTexture.moveDown);
-		// myKeyboard.registerCommand(KeyEvent.DOM_VK_Q, myTexture.rotateLeft);
-		// myKeyboard.registerCommand(KeyEvent.DOM_VK_E, myTexture.rotateRight);
 		myKeyboard.registerCommand(KeyEvent.DOM_VK_ESCAPE, function() {
 			//
 			// Stop the game loop by canceling the request for the next animation frame
@@ -106,23 +103,6 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			game.showScreen('main-menu');
 		});
 		
-		//
-		// Create an ability to move the logo using the mouse
-		// myMouse = input.Mouse();
-		// myMouse.registerCommand('mousedown', function(e) {
-		// 	mouseCapture = true;
-		// 	myTexture.moveTo({x : e.clientX, y : e.clientY});
-		// });
-
-		// myMouse.registerCommand('mouseup', function() {
-		// 	mouseCapture = false;
-		// });
-
-		// myMouse.registerCommand('mousemove', function(e) {
-		// 	if (mouseCapture) {
-		// 		myTexture.moveTo({x : e.clientX, y : e.clientY});
-		// 	}
-		// });
 	}
 	
 	function update(elapsedTime) {

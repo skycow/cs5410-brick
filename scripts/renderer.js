@@ -158,29 +158,12 @@ MyGame.graphics = (function() {
 				context.translate(spec.center.x, spec.center.y);
 				context.rotate(spec.rotation);
 				context.translate(-spec.center.x, -spec.center.y);
-				
-				// context.drawImage(
-				// 	image, 
-				// 	spec.center.x - spec.width/2,
-				// 	spec.center.y - spec.height/2,
-				// 	spec.width, spec.height);
 
 				context.beginPath();
 				context.fillStyle = spec.color;
 				context.rect(spec.center.x, spec.center.y, spec.width, spec.height);
 				context.fill();
 
-				// context.beginPath();
-				// context.fillStyle = "#435a6b";
-				// context.font = "48px serif";
-				// context.fillText("Hello",40,200);
-
-				// context.beginPath();
-				// context.fillStyle = "#435a6b";
-				// context.font = "20px Georgia";
-				// context.fillText("Hello World!", 10, 200);
-				// context.fill();
-				
 				context.restore();
 			}
 		};
@@ -214,9 +197,6 @@ MyGame.graphics = (function() {
 					if(ballSpec.center.y+ballSpec.height/2 > spec.center.y && ballSpec.center.y+ballSpec.height/2 < spec.center.y+spec.height){
 						if(!paddle)
 							spec.broken = true;
-							// else {
-							// ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
-							// }
 						ballSpec.direction.y = -ballSpec.direction.y;	
 						ballSpec.center.y = spec.center.y-ballSpec.height/2;
 						score += getPoints(spec.color);
@@ -229,6 +209,9 @@ MyGame.graphics = (function() {
 						var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
 						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
 							ballSpec.moveRate += .1;
+				}
+				if(allBroken === 112){
+					endGame = true;
 				}
 					}else if(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y-ballSpec.height/2 < spec.center.y+spec.height){
 						if(!paddle)						
@@ -244,6 +227,9 @@ MyGame.graphics = (function() {
 						var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
 						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
 							ballSpec.moveRate += .1;
+				}
+				if(allBroken === 112){
+					endGame = true;
 				}
 					}
 				} 
@@ -265,6 +251,9 @@ MyGame.graphics = (function() {
 						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
 							ballSpec.moveRate += .1;
 				}
+				if(allBroken === 112){
+					endGame = true;
+				}
 					}else if(ballSpec.center.x-ballSpec.width/2 > spec.center.x && ballSpec.center.x-ballSpec.width/2 < spec.center.x+spec.width){
 						if(!paddle)
 							spec.broken = true;
@@ -281,6 +270,9 @@ MyGame.graphics = (function() {
 						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
 							ballSpec.moveRate += .1;
 				}
+				if(allBroken === 112){
+					endGame = true;
+				}
 					}
 				}
 				
@@ -288,9 +280,7 @@ MyGame.graphics = (function() {
 					addBall = true;
 				}
 
-				if(allBroken === 112){
-					endGame = true;
-				}
+				
 			}
 
 		};
@@ -312,29 +302,12 @@ MyGame.graphics = (function() {
 				context.translate(spec.center.x, spec.center.y);
 				context.rotate(spec.rotation);
 				context.translate(-spec.center.x, -spec.center.y);
-				
-				// context.drawImage(
-				// 	image, 
-				// 	spec.center.x - spec.width/2,
-				// 	spec.center.y - spec.height/2,
-				// 	spec.width, spec.height);
-	
+
 				context.beginPath();
 				context.fillStyle = spec.color;
 				context.arc(spec.center.x, spec.center.y, spec.width/2, 0, 2*Math.PI);
 				context.fill();
 	
-				// context.beginPath();
-				// context.fillStyle = "#435a6b";
-				// context.font = "48px serif";
-				// context.fillText("Hello",40,200);
-	
-				// context.beginPath();
-				// context.fillStyle = "#435a6b";
-				// context.font = "20px Georgia";
-				// context.fillText("Hello World!", 10, 200);
-				// context.fill();
-				
 				context.restore();
 			}
 	};
@@ -371,7 +344,6 @@ MyGame.graphics = (function() {
 					}
 					localStorage.scores = JSON.stringify(scorearr);
 					document.getElementById('id-continue-game').classList.add('hide');
-					//MyGame.game.showScreen('main-menu');
 				}
 				}
 				else{
@@ -386,18 +358,6 @@ MyGame.graphics = (function() {
 
 		return that;
 	}
-
-	// function Brick(spec) {
-
-	// 	var that = {};
-
-	// 	that.draw = () => {
-	// 		context.save();
-
-			
-	// 	}
-
-	// };
 
 	return {
 		clear : clear,
