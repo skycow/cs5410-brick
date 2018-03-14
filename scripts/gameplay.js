@@ -8,6 +8,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		cancelNextRequest = false,
 		lastTimeStamp,
 		bricks = [],
+		bonuss = [],
 		ball = null,
 		countdown = 3,
 		second = 0,
@@ -126,10 +127,19 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 	function update(elapsedTime) {
 		myKeyboard.update(elapsedTime);
 		if(!countdown){
-			ball.moveBall(elapsedTime);
+			ball.moveBall(elapsedTime, false);
+
+			for(var bonus in bonuss){
+				bonuss[bonus].moveBall(elapsedTime, true);
+			}
+
 			for(var brick in bricks){
 				bricks[brick].checkCollisions(ball.getSpec(),false, brick-14);
 			}
+			if(graphics.getShrink()){
+				myTexture.updateWidth(100);
+			}
+
 			myTexture.checkCollisions(ball.getSpec(),true, -1);
 			//myTexture.checkBounce(ball.getSpec());
 		}else{
@@ -153,6 +163,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		graphics.drawPads();
 		countdown += graphics.getCountdown();
 		if(countdown){
+			myTexture.updateWidth(200);
 			var canvas = document.getElementById("canvas-main");
 			var ctx = canvas.getContext("2d");
 			ctx.font = "300px Comic Sans MS";

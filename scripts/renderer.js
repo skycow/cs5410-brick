@@ -15,6 +15,8 @@ MyGame.graphics = (function() {
 	var rows = [0,0,0,0,0,0,0,0];
 	var endGame = false;
 	var speedCheck = 0;
+	var addBall = false;
+	var shrinkPaddle = false;
 
 	//
 	// Place a 'clear' function on the Canvas prototype, this makes it a part
@@ -58,6 +60,8 @@ MyGame.graphics = (function() {
 		paddles = 3;
 		rows = [0,0,0,0,0,0,0,0];
 		speedCheck = 0;
+		addBall = false;
+		shrinkPaddle = false;
 
 	}
 
@@ -74,7 +78,25 @@ MyGame.graphics = (function() {
 	function getEnd() {
 		return endGame;
 	}
+
+	function getShrink() {
+		var ret = shrinkPaddle;
+		shrinkPaddle = false;
+		return ret;
+	}
 	
+	function getShrink() {
+		var ret = shrinkPaddle;
+		shrinkPaddle = false;
+		return ret;
+	}
+
+	function getAddBall() {
+		var ret = addBall;
+		addBall = false;
+		return ret;
+	}
+
 	//------------------------------------------------------------------
 	//
 	// This is used to create a texture object that can be used by client
@@ -106,8 +128,13 @@ MyGame.graphics = (function() {
 		};
 		
 		that.moveRight = function(elapsedTime) {
-			if(spec.center.x + spec.moveRate * (elapsedTime / 1000) < 1275)
-			spec.center.x += spec.moveRate * (elapsedTime / 1000);
+			if(spec.width === 200){
+				if(spec.center.x + spec.moveRate * (elapsedTime / 1000) < 1275)
+				spec.center.x += spec.moveRate * (elapsedTime / 1000);
+			} else {
+				if(spec.center.x + spec.moveRate * (elapsedTime / 1000) < 1375)
+				spec.center.x += spec.moveRate * (elapsedTime / 1000);
+			}
 		};
 		
 		that.moveUp = function(elapsedTime) {
@@ -177,6 +204,7 @@ MyGame.graphics = (function() {
 
 		that.checkCollisions = function(ballSpec, paddle, idx){
 			if((spec.color != "black" || paddle) && !spec.broken){
+				var balls = Math.floor(score/100);
 
 				//north/south hit
 				if(ballSpec.center.x > spec.center.x && ballSpec.center.x < spec.center.x+spec.width){
@@ -184,33 +212,36 @@ MyGame.graphics = (function() {
 					if(ballSpec.center.y+ballSpec.height/2 > spec.center.y && ballSpec.center.y+ballSpec.height/2 < spec.center.y+spec.height){
 						if(!paddle)
 							spec.broken = true;
-							else {
-							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
-							}
+							// else {
+							// ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
+							// }
 						ballSpec.direction.y = -ballSpec.direction.y;	
 						ballSpec.center.y = spec.center.y-ballSpec.height/2;
 						score += getPoints(spec.color);
 						rows[Math.floor(idx/14)]+=1;
 						if(rows[Math.floor(idx/14)] === 14)
 							score += 125; 
-											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
-				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
-					ballSpec.moveRate += .05;
+						if(Math.floor(idx/14) === 0){
+							shrinkPaddle = true;
+						}
+						var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+							ballSpec.moveRate += .1;
 				}
 					}else if(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y-ballSpec.height/2 < spec.center.y+spec.height){
 						if(!paddle)						
 							spec.broken = true;
-						else {
-							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
-							}
 						ballSpec.direction.y = -ballSpec.direction.y;	
 						score += getPoints(spec.color);
 						rows[Math.floor(idx/14)]+=1;
 						if(rows[Math.floor(idx/14)] === 14)
 							score += 125; 
-											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
-				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
-					ballSpec.moveRate += .05;
+						if(Math.floor(idx/14) === 0){
+							shrinkPaddle = true;
+						}
+						var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+							ballSpec.moveRate += .1;
 				}
 					}
 				} 
@@ -219,38 +250,41 @@ MyGame.graphics = (function() {
 					if(ballSpec.center.x+ballSpec.width/2 > spec.center.x && ballSpec.center.x+ballSpec.width/2 < spec.center.x+spec.width){
 						if(!paddle)
 							spec.broken = true;
-							else {
-							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
-							}
 						ballSpec.direction.x = -ballSpec.direction.x;	
 						ballSpec.center.x = spec.center.x-ballSpec.width/2;
 						score += getPoints(spec.color);
 						rows[Math.floor(idx/14)]+=1;
 						if(rows[Math.floor(idx/14)] === 14)
 							score += 125; 
-											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
-				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
-					ballSpec.moveRate += .05;
+						if(Math.floor(idx/14) === 0){
+							shrinkPaddle = true;
+						}
+						var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+							ballSpec.moveRate += .1;
 				}
 					}else if(ballSpec.center.x-ballSpec.width/2 > spec.center.x && ballSpec.center.x-ballSpec.width/2 < spec.center.x+spec.width){
 						if(!paddle)
 							spec.broken = true;
-							else {
-							ballSpec.direction.x = (ballSpec.center.x - spec.center.x + spec.width/2)/(spec.width/2);
-							}
 						ballSpec.direction.x = -ballSpec.direction.x;	
 						ballSpec.center.x = spec.center.x+spec.width+ballSpec.width/2;
 						score += getPoints(spec.color);
 						rows[Math.floor(idx/14)]+=1;
 						if(rows[Math.floor(idx/14)] === 14)
 							score += 125; 
-											var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
-				if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
-					ballSpec.moveRate += .05;
+						if(Math.floor(idx/14) === 0){
+							shrinkPaddle = true;
+						}
+						var allBroken = rows.reduce((a, b) => a + b, 0) - speedCheck;
+						if((allBroken === 4 || allBroken === 12 || allBroken === 36 || allBroken === 62) && !paddle){
+							ballSpec.moveRate += .1;
 				}
 					}
 				}
 				
+				if(balls < Math.floor(score/100)){
+					addBall = true;
+				}
 
 				if(allBroken === 112){
 					endGame = true;
@@ -259,8 +293,8 @@ MyGame.graphics = (function() {
 
 		};
 
-		that.checkBounce = function() {
-
+		that.updateWidth = function(widthIn) {
+			spec.width = widthIn;
 
 		};
 
@@ -317,7 +351,7 @@ MyGame.graphics = (function() {
 				countdown = 3;
 				paddles--;
 				speedCheck = rows.reduce((a, b) => a + b, 0);
-				spec.moveRate = .2;
+				spec.moveRate = .3;
 				if(paddles === 0) {
 					countdown = 0;
 					spec.active = false;
@@ -362,6 +396,8 @@ MyGame.graphics = (function() {
 		reset: reset,
 		getCountdown: getCountdown,
 		getPads: getPads,
-		getEnd: getEnd
+		getEnd: getEnd,
+		getShrink: getShrink,
+		getAddBall: getAddBall
 	};
 }());

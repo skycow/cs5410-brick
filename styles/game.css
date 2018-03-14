@@ -52,7 +52,7 @@ ul.menu li button {
 	width: 10em;
 	height: 1.5em;
 	background: #0404B4;
-	border: 0.1em solid rgb(255, 0, 0);
+	border: 0.1em solid rgb(170, 230, 255);
 	border-radius: 0.5em;
 	box-shadow: 0.2em 0.2em 0.3em rgb(0, 0, 0);
 }
@@ -85,3 +85,29 @@ ul.menu li button:active {
 #about p {
 	text-align: center;
 }
+
+span.red{
+	color: #FF0000;
+}
+span.orange{
+	color: #FF8800;
+}
+span.yellow{
+	color: #FFFF00;
+}
+span.green{
+	color: #00FF00;
+}
+span.blue{
+	color: #0000FF;
+}
+span.violet{
+	color: #8800FF;
+}
+span.black{
+	color: #000000;
+}
+span.grey{
+	color: #888888;
+}
+
