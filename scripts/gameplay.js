@@ -10,10 +10,18 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		bricks = [],
 		ball = null,
 		countdown = 3,
-		second = 0;
+		second = 0,
+		score = 0;
 	
 	function initialize() {
 		console.log('game initializing...');
+
+		myTexture = null;
+		bricks = [];
+		ball = null;
+		countdown = 3;
+		second = 0;
+		score = 0;
 
 		myTexture = graphics.Texture( {
 			center : { x : 650, y : 750 },
@@ -70,7 +78,8 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			direction: {x: Math.cos(-3.14159/4), y: Math.sin(-3.14159/4)},
 			moveRate : .2,			// pixels per second
 			rotateRate : 0,	// Radians per second
-			color : "red"
+			color : "red",
+			active: true
 		});
 
 
@@ -116,9 +125,9 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			myKeyboard.update(elapsedTime);
 			ball.moveBall(elapsedTime);
 			for(var brick in bricks){
-				bricks[brick].checkCollisions(ball.getSpec(),false);
+				bricks[brick].checkCollisions(ball.getSpec(),false,{score:score});
 			}
-			myTexture.checkCollisions(ball.getSpec(),true);
+			myTexture.checkCollisions(ball.getSpec(),true,{score:score});
 			//myTexture.checkBounce(ball.getSpec());
 		}else{
 			second += elapsedTime/1000;

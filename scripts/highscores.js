@@ -8,8 +8,19 @@ MyGame.screens['high-scores'] = (function(game) {
 	}
 	
 	function run() {
-		//
-		// I know this is empty, there isn't anything to do.
+		var tosort = [];
+		tosort = localStorage.getItem('scores');
+		if(tosort !== null){
+			tosort = JSON.parse(tosort);
+			var sorted = [];
+			sorted = tosort.sort().reverse();
+			var str = "";
+			for(var s in sorted){
+				str += "<li>" + sorted[s] + "</li>";
+			}
+			var hse = document.getElementById('highscorelist');
+			hse.innerHTML = str;
+		}
 	}
 	
 	return {

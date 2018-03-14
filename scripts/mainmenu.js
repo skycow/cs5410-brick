@@ -6,8 +6,16 @@ MyGame.screens['main-menu'] = (function(game) {
 		// Setup each of menu events for the screens
 		document.getElementById('id-new-game').addEventListener(
 			'click',
-			function() {game.showScreen('game-play'); });
+			function() {
+				MyGame.screens['game-play'].initialize(); 
+				game.showScreen('game-play');
+				document.getElementById('id-continue-game').classList.remove('hide');
+		});
 		
+		document.getElementById('id-continue-game').addEventListener(
+			'click',
+			function() { game.showScreen('game-play'); });
+
 		document.getElementById('id-high-scores').addEventListener(
 			'click',
 			function() { game.showScreen('high-scores'); });

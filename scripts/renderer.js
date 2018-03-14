@@ -8,6 +8,8 @@ MyGame.graphics = (function() {
 	
 	var canvas = document.getElementById('canvas-main'),
 		context = canvas.getContext('2d');
+
+	var score = 0;
 	
 	//
 	// Place a 'clear' function on the Canvas prototype, this makes it a part
@@ -109,6 +111,25 @@ MyGame.graphics = (function() {
 			}
 		};
 
+		function getPoints(brickColor) {
+			switch(brickColor){
+				case "yellow":
+					return 1;
+					break;
+				case "orange":
+					return 2;
+					break;
+				case "blue":
+					return 3;
+					break;
+				case "green":
+					return 5;
+					break;
+				default:
+					return 0;
+			}
+		};
+
 		that.checkCollisions = function(ballSpec, paddle){
 			if((spec.color != "black" || paddle) && !spec.broken){
 
@@ -120,10 +141,12 @@ MyGame.graphics = (function() {
 						spec.broken = true;
 						ballSpec.direction.y = -ballSpec.direction.y;	
 						ballSpec.center.y = spec.center.y-ballSpec.height/2;
+						score += getPoints(spec.color);
 					}else if(ballSpec.center.y-ballSpec.height/2 > spec.center.y && ballSpec.center.y-ballSpec.height/2 < spec.center.y+spec.height){
 						if(!paddle)						
 						spec.broken = true;
 						ballSpec.direction.y = -ballSpec.direction.y;	
+						score += getPoints(spec.color);
 					}
 				} 
 				if(ballSpec.center.y > spec.center.y && ballSpec.center.y < spec.center.y+spec.height){
@@ -133,11 +156,13 @@ MyGame.graphics = (function() {
 						spec.broken = true;
 						ballSpec.direction.x = -ballSpec.direction.x;	
 						ballSpec.center.x = spec.center.x-ballSpec.width/2;
+						score += getPoints(spec.color);
 					}else if(ballSpec.center.x-ballSpec.width/2 > spec.center.x && ballSpec.center.x-ballSpec.width/2 < spec.center.x+spec.width){
 						if(!paddle)
 						spec.broken = true;
 						ballSpec.direction.x = -ballSpec.direction.x;	
 						ballSpec.center.x = spec.center.x+spec.width+ballSpec.width/2;
+						score += getPoints(spec.color);
 					}
 				}
 			}
@@ -150,35 +175,38 @@ MyGame.graphics = (function() {
 		};
 		
 		that.drawBall = function() {
-			context.save();
-			
-			context.translate(spec.center.x, spec.center.y);
-			context.rotate(spec.rotation);
-			context.translate(-spec.center.x, -spec.center.y);
-			
-			// context.drawImage(
-			// 	image, 
-			// 	spec.center.x - spec.width/2,
-			// 	spec.center.y - spec.height/2,
-			// 	spec.width, spec.height);
+			if(spec.active){
 
-			context.beginPath();
-			context.fillStyle = spec.color;
-			context.arc(spec.center.x, spec.center.y, spec.width/2, 0, 2*Math.PI);
-			context.fill();
-
-			// context.beginPath();
-			// context.fillStyle = "#435a6b";
-			// context.font = "48px serif";
-			// context.fillText("Hello",40,200);
-
-			// context.beginPath();
-			// context.fillStyle = "#435a6b";
-			// context.font = "20px Georgia";
-			// context.fillText("Hello World!", 10, 200);
-			// context.fill();
-			
-			context.restore();
+				context.save();
+				
+				context.translate(spec.center.x, spec.center.y);
+				context.rotate(spec.rotation);
+				context.translate(-spec.center.x, -spec.center.y);
+				
+				// context.drawImage(
+				// 	image, 
+				// 	spec.center.x - spec.width/2,
+				// 	spec.center.y - spec.height/2,
+				// 	spec.width, spec.height);
+	
+				context.beginPath();
+				context.fillStyle = spec.color;
+				context.arc(spec.center.x, spec.center.y, spec.width/2, 0, 2*Math.PI);
+				context.fill();
+	
+				// context.beginPath();
+				// context.fillStyle = "#435a6b";
+				// context.font = "48px serif";
+				// context.fillText("Hello",40,200);
+	
+				// context.beginPath();
+				// context.fillStyle = "#435a6b";
+				// context.font = "20px Georgia";
+				// context.fillText("Hello World!", 10, 200);
+				// context.fill();
+				
+				context.restore();
+			}
 	};
 
 	that.moveBall = (elapsedTime) => {
@@ -187,8 +215,14 @@ MyGame.graphics = (function() {
 		if(spec.center.x+spec.width/2 < 100 || spec.center.x+spec.width/2 > 1450 )
 			spec.direction.x = -spec.direction.x;
 		spec.center.y += (elapsedTime * spec.moveRate * spec.direction.y);
-		if(spec.center.y+spec.width/2 < 100 || spec.center.y+spec.width/2 > 800 )
+		if(spec.center.y+spec.width/2 < 100)
 		spec.direction.y = -spec.direction.y;
+		if( spec.center.y+spec.width/2 > 800 ){
+			spec.center.x = 750;
+			spec.center.y = 725;
+			spec.direction.x = Math.cos(-3.14159/4);
+			spec.direction.y = Math.sin(-3.14159/4);
+		}
 
 	}
 
