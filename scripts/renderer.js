@@ -97,6 +97,8 @@ MyGame.graphics = (function() {
 		return ret;
 	}
 
+	
+
 	//------------------------------------------------------------------
 	//
 	// This is used to create a texture object that can be used by client
@@ -298,7 +300,9 @@ MyGame.graphics = (function() {
 
 		};
 
-		
+		that.getActive = function() {
+		return spec.active;
+	}
 		
 		that.drawBall = function() {
 			if(spec.active){
@@ -335,7 +339,7 @@ MyGame.graphics = (function() {
 			}
 	};
 
-	that.moveBall = (elapsedTime) => {
+	that.moveBall = (elapsedTime, ballsLeft) => {
 		if(spec.active){
 			spec.center.x += (elapsedTime * spec.moveRate * spec.direction.x);
 			if(spec.center.x+spec.width/2 < 100 || spec.center.x+spec.width/2 > 1450 )
@@ -344,6 +348,9 @@ MyGame.graphics = (function() {
 			if(spec.center.y+spec.width/2 < 100)
 			spec.direction.y = -spec.direction.y;
 			if( spec.center.y+spec.width/2 > 800 ){
+				if(ballsLeft ===1 ){
+				//
+					
 				spec.center.x = 750;
 				spec.center.y = 725;
 				spec.direction.x = Math.cos(-3.14159/4);
@@ -353,8 +360,8 @@ MyGame.graphics = (function() {
 				speedCheck = rows.reduce((a, b) => a + b, 0);
 				spec.moveRate = .3;
 				if(paddles === 0) {
-					countdown = 0;
 					spec.active = false;
+					countdown = 0;
 					var scorearr = localStorage.getItem('scores');
 					if(scorearr !== null){
 						scorearr = JSON.parse(scorearr);
@@ -365,6 +372,10 @@ MyGame.graphics = (function() {
 					localStorage.scores = JSON.stringify(scorearr);
 					document.getElementById('id-continue-game').classList.add('hide');
 					//MyGame.game.showScreen('main-menu');
+				}
+				}
+				else{
+					spec.active = false;
 				}
 			}
 

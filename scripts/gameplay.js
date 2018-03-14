@@ -8,7 +8,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		cancelNextRequest = false,
 		lastTimeStamp,
 		bricks = [],
-		bonuss = [],
+		balls = [],
 		ball = null,
 		countdown = 3,
 		second = 0,
@@ -23,6 +23,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		countdown = 3;
 		second = 0;
 		score = 0;
+		balls = [];
 
 		graphics.reset();
 
@@ -74,7 +75,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			};
 		};
 
-		ball = graphics.Texture( {
+		balls.push(graphics.Texture( {
 			center : { x : 750, y : 725 },
 			width : 50, height : 50,
 			rotation : -3.14159/4,
@@ -83,7 +84,7 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 			rotateRate : 0,	// Radians per second
 			color : "red",
 			active: true
-		});
+		}));
 
 
 
@@ -127,20 +128,39 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 	function update(elapsedTime) {
 		myKeyboard.update(elapsedTime);
 		if(!countdown){
-			ball.moveBall(elapsedTime, false);
 
-			for(var bonus in bonuss){
-				bonuss[bonus].moveBall(elapsedTime, true);
+			var keep = [];
+			for(var ball in balls){
+				if(balls[ball].getActive()){
+					keep.push(balls[ball]);
+				}
+			}
+			balls = keep;
+			for(var ball in balls){
+				balls[ball].moveBall(elapsedTime, balls.length);
+				for(var brick in bricks){
+					bricks[brick].checkCollisions(balls[ball].getSpec(),false, brick-14);
+				}
+				myTexture.checkCollisions(balls[ball].getSpec(),true, -1);
 			}
 
-			for(var brick in bricks){
-				bricks[brick].checkCollisions(ball.getSpec(),false, brick-14);
-			}
 			if(graphics.getShrink()){
 				myTexture.updateWidth(100);
 			}
 
-			myTexture.checkCollisions(ball.getSpec(),true, -1);
+			if(graphics.getAddBall()){
+				balls.push(graphics.Texture( {
+				center : { x : 750, y : 725 },
+				width : 50, height : 50,
+				rotation : -3.14159/4,
+				direction: {x: Math.cos(-3.14159/4), y: Math.sin(-3.14159/4)},
+				moveRate : .3,			// pixels per second
+				rotateRate : 0,	// Radians per second
+				color : "red",
+				active: true
+				}));
+			}
+
 			//myTexture.checkBounce(ball.getSpec());
 		}else{
 			second += elapsedTime/1000;
@@ -158,7 +178,9 @@ MyGame.screens['game-play'] = (function(game, graphics, input) {
 		for(var brick in bricks){
 			bricks[brick].draw();
 		}
-		ball.drawBall();
+		for(var ball in balls){
+			balls[ball].drawBall();;
+		}
 		graphics.drawScore();
 		graphics.drawPads();
 		countdown += graphics.getCountdown();
